@@ -1,0 +1,22 @@
+on:
+  push:
+    branches:
+      - main
+name: 🚀 Deploy website on push
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 360 # time out after 30 minutes (default is 360 minutes)
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v3
+
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: shayankolahi.ir
+          username: deploy@eventoment.com
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /evento/
+          timeout: 1200000
