@@ -6,10 +6,10 @@ use Symfony\Component\BrowserKit\Response;
 
 class Client extends AbstractBrowser
 {
-    protected function doRequest($request): Response
+    protected function doRequest($request): object
     {
         // ... convert request into a response
 
-        return new Response($content, $status, $headers);
+        return $request;
     }
 }

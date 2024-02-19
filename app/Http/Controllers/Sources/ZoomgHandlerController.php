@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers\Sources;
 
-use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Models\Source;
-use Goutte\Client;
-use Illuminate\Http\Request;
+use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ZoomgHandlerController extends SourceHandlerController
 {
-
     public function run(Source $source): array
     {
 
-
-        $client = new Client();
+        $client = new HttpBrowser();
         $posts = [];
         foreach ($source->source_urls as $url) {
             $crawler = $client->request('GET', $url->url);
@@ -33,13 +29,16 @@ class ZoomgHandlerController extends SourceHandlerController
                 $result['categories'] = $node->filter('.topicCategories a')->each(function (Crawler $node, $i) {
                     $category['name'] = $node->filter('label')->text();
                     $category['url'] = $node->attr('href');
+
                     return $category;
                 });
+
                 return $result;
             });
 
             $posts['source'] = $source;
         }
+
         return $posts;
     }
 
@@ -48,7 +47,6 @@ class ZoomgHandlerController extends SourceHandlerController
         $client = new Client();
         $page = $client->request('GET', $post->url);
         $articleExcerptNode = $page->filter('#bodyContainer');
-
 
         $articleExcerptNode->filter('.beforesource')->each(function (Crawler $crawler) {
             foreach ($crawler as $node) {
@@ -66,6 +64,6 @@ class ZoomgHandlerController extends SourceHandlerController
 
     private function biggerImg($src)
     {
-        return preg_replace('/--?\d*x-?\d*/','',$src);
+        return preg_replace('/--?\d*x-?\d*/', '', $src);
     }
 }
